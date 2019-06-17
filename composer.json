@@ -1,16 +1,34 @@
 {
-	"name": "vrana/notorm",
-	"description": "NotORM is a PHP library for simple working with data in the database.",
-	"keywords": ["database", "dbal"],
-	"homepage": "http://www.notorm.com/",
-	"license": ["Apache-2.0", "GPL-2.0+"],
-	"authors": [
-		{
-			"name": "Jakub Vrána",
-			"homepage": "http://www.vrana.cz/"
-		}
-	],
-	"autoload": {
-		"files": ["NotORM.php"]
-	}
+    "name": "lusito/not-orm",
+    "description": "NotORM is a PHP library for simple working with data in the database.",
+    "version": "0.8",
+    "keywords": [
+        "NotORM",
+        "Database",
+        "PDO"
+    ],
+    "homepage": "https://github.com/lusito/not-orm",
+    "license": "Zlib",
+    "authors": [{
+            "name": "Santo Pfingsten",
+            "email": "core@lusito.info",
+            "homepage": "https://github.com/lusito",
+            "role": "Developer"
+        }
+    ],
+    "support": {
+        "issues": "https://github.com/lusito/not-orm/issues",
+        "source": "https://github.com/lusito/not-orm"
+    },
+    "require": {
+        "php": "^5.6.0|^7.0.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^8"
+    },
+    "autoload": {
+        "psr-4": {
+            "Lusito\\NotORM\\": "src/"
+        }
+    }
 }
