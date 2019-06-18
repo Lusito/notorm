@@ -1,4 +1,5 @@
 <?php
+use Lusito\NotORM\DB;
 use Lusito\NotORM\Row;
 
 class TestRow extends Row {
@@ -14,7 +15,20 @@ class TestRow extends Row {
 
 final class RowClassTest extends TestCase
 {
-    public function testCustomRowClass(): void
+    public function testCustomRowClassDB(): void
+    {
+        $this->setupDB();
+        DB::setConfigValue('rowClass', 'TestRow');
+
+        $application = DB::getRow('application', 1);
+
+        $this->assertEquals($application['test_title'], 'Adminer');
+        $this->assertEquals($application->author["test_name"], 'Jakub Vrana');
+
+        DB::setConfigValue('rowClass', 'Lusito\NotORM\Row');
+    }
+
+    public function testCustomRowClassDatabase(): void
     {
         $db = $this->setupDatabase();
         $db->rowClass = 'TestRow';
