@@ -5,7 +5,7 @@ use Lusito\NotORM\Cache\Cache;
 /** Structure reading meta-informations from the database
  */
 class DiscoveryStructure implements Structure {
-	protected $connection = null, $cache = null, $structure = array();
+	protected $connection = null, $cache = null, $structure = [];
 	protected $foreign;
 
 	/** Create autodisovery structure

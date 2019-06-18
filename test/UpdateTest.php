@@ -15,7 +15,7 @@ final class UpdateTest extends TestCase
             "web" => "",
             "slogan" => "The best humane Web text generator"
         ]);
-        $application->application_tag()->insert(array("tag_id" => 21));
+        $application->application_tag()->insert(["tag_id" => 21]);
 
         // retrieve the really stored value
         $application = $db->application[$id];

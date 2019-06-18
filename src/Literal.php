@@ -5,7 +5,7 @@ class Literal {
 	protected $value = '';
 
 	/** @var array */
-	public $parameters = array();
+	public $parameters = [];
 
 	/** Create literal value
 	 * @param string

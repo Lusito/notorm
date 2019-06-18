@@ -9,6 +9,6 @@ final class RowSetTest extends TestCase
         $application = $db->application[1];
         $application->author = $db->author[12];
         $this->assertEquals($application->update(), 1);
-        $application->update(array("author_id" => 11));
+        $application->update(["author_id" => 11]);
     }
 }

@@ -3,7 +3,7 @@
 /** Single row representation
  */
 class Row extends Friendly implements \IteratorAggregate, \ArrayAccess, \Countable, \JsonSerializable {
-	private $modified = array();
+	private $modified = [];
 	protected $row, $result, $cfg, $primary;
 
 	/** @access protected must be public because it is called from Result */
@@ -31,7 +31,7 @@ class Row extends Friendly implements \IteratorAggregate, \ArrayAccess, \Countab
 		$column = $this->cfg->structure->getReferencedColumn($name, $this->result->table);
 		$referenced = &$this->result->referenced[$name];
 		if (!isset($referenced)) {
-			$keys = array();
+			$keys = [];
 			foreach ($this->result->rows as $row) {
 				if ($row[$column] !== null) {
 					$keys[$row[$column]] = null;
@@ -42,7 +42,7 @@ class Row extends Friendly implements \IteratorAggregate, \ArrayAccess, \Countab
 				$referenced = new Result($table, $this->cfg);
 				$referenced->where("$table." . $this->cfg->structure->getPrimary($table), array_keys($keys));
 			} else {
-				$referenced = array();
+				$referenced = [];
 			}
 		}
 
@@ -79,7 +79,7 @@ class Row extends Friendly implements \IteratorAggregate, \ArrayAccess, \Countab
 
 	/** Get referencing rows
 	 * @param string table name
-	 * @param array (["condition"[, array("value")]])
+	 * @param array (["condition"[, ["value"]]])
 	 * @return MultiResult
 	 */
 	function __call($name, array $args) {
@@ -88,7 +88,7 @@ class Row extends Friendly implements \IteratorAggregate, \ArrayAccess, \Countab
 		$return = new MultiResult($table, $this->cfg, $this->result, $column, $this[$this->result->primary]);
 		$return->where("$table.$column", array_keys((array) $this->result->rows)); // (array) - is null after insert
 		if ($args) {
-			call_user_func_array(array($return, 'where'), $args);
+			call_user_func_array([$return, 'where'], $args);
 		}
 		return $return;
 	}

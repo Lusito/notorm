@@ -8,12 +8,12 @@ final class DateTimeTest extends TestCase
         $db = $this->setupDatabase();
         $date = new DateTime("2011-08-30");
 
-        $db->application()->insert(array(
+        $db->application()->insert([
             "id" => 5,
             "author_id" => 11,
             "title" => $date,
             "slogan" => new Literal("?", $date),
-        ));
+        ]);
         $application = $db->application()->where("title = ?", $date)->fetch();
 
         $this->assertEquals($application['slogan'], '2011-08-30 00:00:00');

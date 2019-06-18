@@ -5,7 +5,7 @@ final class CacheTest extends TestCase
 {
     public function testSessionCache(): void
     {
-        $_GLOBALS['_SESSION'] = array(); // not session_start() - headers already sent
+        $_GLOBALS['_SESSION'] = []; // not session_start() - headers already sent
 
         $db = $this->setupDatabase(function($builder) {
             $builder->cache(new SessionCache());

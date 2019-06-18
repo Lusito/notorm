@@ -19,13 +19,13 @@ class Database {
 
 	/** Get table data
 	 * @param string
-	 * @param array (["condition"[, array("value")]]) passed to Result::where()
+	 * @param array (["condition"[, ["value"]]]) passed to Result::where()
 	 * @return Result
 	 */
 	public function __call($table, array $where) {
 		$return = new Result($this->cfg->structure->getReferencingTable($table, ''), $this->cfg);
 		if ($where) {
-			call_user_func_array(array($return, 'where'), $where);
+			call_user_func_array([$return, 'where'], $where);
 		}
 		return $return;
 	}

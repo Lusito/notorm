@@ -3,13 +3,13 @@
 /** Cache using PHP include
  */
 class IncludeCache implements Cache {
-	private $filename, $data = array();
+	private $filename, $data = [];
 
 	function __construct($filename) {
 		$this->filename = $filename;
 		$this->data = @include realpath($filename); // @ - file may not exist, realpath() to not include from include_path //! silently falls with syntax error and fails with unreadable file
 		if (!is_array($this->data)) { // empty file returns 1
-			$this->data = array();
+			$this->data = [];
 		}
 	}
 

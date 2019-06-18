@@ -3,7 +3,7 @@
 /** Cache using file
  */
 class FileCache implements Cache {
-	private $filename, $data = array();
+	private $filename, $data = [];
 
 	function __construct($filename) {
 		$this->filename = $filename;

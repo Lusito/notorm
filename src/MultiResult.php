@@ -25,7 +25,7 @@ class MultiResult extends Result {
 	}
 
 	function insert_multi(array $rows) {
-		$args = array();
+		$args = [];
 		foreach ($rows as $data) {
 			if ($data instanceof \Traversable && !$data instanceof Result) {
 				$data = iterator_to_array($data);
@@ -38,7 +38,7 @@ class MultiResult extends Result {
 		return parent::insert_multi($args);
 	}
 
-	function insert_update(array $unique, array $insert, array $update = array()) {
+	function insert_update(array $unique, array $insert, array $update = []) {
 		$unique[$this->column] = $this->active;
 		return parent::insert_update($unique, $insert, $update);
 	}
@@ -68,7 +68,7 @@ class MultiResult extends Result {
 		if (!$this->select) {
 			array_unshift($args, "$this->table.$this->column");
 		}
-		return call_user_func_array(array($this, 'parent::select'), $args);
+		return call_user_func_array([$this, 'parent::select'], $args);
 	}
 
 	function order($columns) {
@@ -76,7 +76,7 @@ class MultiResult extends Result {
 			$this->order[] = "$this->table.$this->column" . (preg_match('~\\bDESC$~i', $columns) ? " DESC" : "");
 		}
 		$args = func_get_args();
-		return call_user_func_array(array($this, 'parent::order'), $args);
+		return call_user_func_array([$this, 'parent::order'], $args);
 	}
 
 	function aggregation($function) {
@@ -89,7 +89,7 @@ class MultiResult extends Result {
 		$query .= " GROUP BY $column";
 		$aggregation = &$this->result->aggregation[$query];
 		if (!isset($aggregation)) {
-			$aggregation = array();
+			$aggregation = [];
 			foreach ($this->query($query, $this->parameters) as $row) {
 				$aggregation[$row[$this->column]] = $row;
 			}
@@ -128,14 +128,14 @@ class MultiResult extends Result {
 					$result->execute();
 					$this->rows = $result->rows;
 				}
-				$referencing = array();
+				$referencing = [];
 				foreach ($this->rows as $key => $row) {
 					$referencing[$row[$this->column]][$key] = $row;
 				}
 			}
 			$this->data = &$referencing[$this->active];
 			if (!isset($this->data)) {
-				$this->data = array();
+				$this->data = [];
 			}
 		}
 	}

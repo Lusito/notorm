@@ -1,15 +1,15 @@
 <?php namespace Lusito\NotORM;
 
 /** Filtered table representation
- * @method Result and(mixed $condition, mixed $parameters = array()) Add AND condition
- * @method Result or(mixed $condition, mixed $parameters = array()) Add OR condition
+ * @method Result and(mixed $condition, mixed $parameters = []) Add AND condition
+ * @method Result or(mixed $condition, mixed $parameters = []) Add OR condition
  */
 class Result extends Friendly implements \Iterator, \ArrayAccess, \Countable, \JsonSerializable {
     protected $cfg;
 	protected $single;
-	protected $select = array(), $conditions = array(), $where = array(), $parameters = array(), $order = array(), $limit = null, $offset = null, $group = "", $having = "", $lock = null;
-	protected $union = array(), $unionOrder = array(), $unionLimit = null, $unionOffset = null;
-	protected $data, $referencing = array(), $aggregation = array(), $accessed, $access, $keys = array();
+	protected $select = [], $conditions = [], $where = [], $parameters = [], $order = [], $limit = null, $offset = null, $group = "", $having = "", $lock = null;
+	protected $union = [], $unionOrder = [], $unionLimit = null, $unionOffset = null;
+	protected $data, $referencing = [], $aggregation = [], $accessed, $access, $keys = [];
 
 	/** Create table result
 	 * @param string
@@ -88,7 +88,7 @@ class Result extends Friendly implements \Iterator, \ArrayAccess, \Countable, \J
 	}
 
 	protected function createJoins($val) {
-		$return = array();
+		$return = [];
 		preg_match_all('~\\b([a-z_][a-z0-9_.:]*[.:])[a-z_*]~i', $val, $matches);
 		foreach ($matches[1] as $names) {
 			$parent = $this->table;
@@ -144,7 +144,7 @@ class Result extends Friendly implements \Iterator, \ArrayAccess, \Countable, \J
 			if (!is_callable($this->cfg->debug)) {
 				$debug = "$query;";
 				if ($parameters) {
-					$debug .= " -- " . implode(", ", array_map(array($this, 'quote'), $parameters));
+					$debug .= " -- " . implode(", ", array_map([$this, 'quote'], $parameters));
 				}
 				$pattern = '(^' . preg_quote(dirname(__FILE__)) . '(\\.php$|[/\\\\]))'; // can be static
 				foreach (debug_backtrace() as $backtrace) {
@@ -158,7 +158,7 @@ class Result extends Friendly implements \Iterator, \ArrayAccess, \Countable, \J
 			}
 		}
 		$return = $this->cfg->connection->prepare($query);
-		if (!$return || !$return->execute(array_map(array($this, 'formatValue'), $parameters))) {
+		if (!$return || !$return->execute(array_map([$this, 'formatValue'], $parameters))) {
 			$return = false;
 		}
 		if ($this->cfg->debugTimer) {
@@ -179,7 +179,7 @@ class Result extends Friendly implements \Iterator, \ArrayAccess, \Countable, \J
 			return "NULL";
 		}
 		if (is_array($val)) { // (a, b) IN ((1, 2), (3, 4))
-			return "(" . implode(", ", array_map(array($this, 'quote'), $val)) . ")";
+			return "(" . implode(", ", array_map([$this, 'quote'], $val)) . ")";
 		}
 		$val = $this->formatValue($val);
 		if (is_float($val)) {
@@ -194,7 +194,7 @@ class Result extends Friendly implements \Iterator, \ArrayAccess, \Countable, \J
 		return $this->cfg->connection->quote($val);
 	}
 
-	/** Shortcut for call_user_func_array(array($this, 'insert'), $rows)
+	/** Shortcut for call_user_func_array([$this, 'insert'], $rows)
 	 * @param array
 	 * @return int number of affected rows or false in case of an error
 	 */
@@ -206,7 +206,7 @@ class Result extends Friendly implements \Iterator, \ArrayAccess, \Countable, \J
 			return 0;
 		}
 		$data = reset($rows);
-		$parameters = array();
+		$parameters = [];
 		if ($data instanceof Result) {
 			$parameters = $data->parameters; //! other parameters
 			$data = (string) $data;
@@ -215,7 +215,7 @@ class Result extends Friendly implements \Iterator, \ArrayAccess, \Countable, \J
 		}
 		$insert = $data;
 		if (is_array($data)) {
-			$values = array();
+			$values = [];
 			foreach ($rows as $value) {
 				if ($value instanceof \Traversable) {
 					$value = iterator_to_array($value);
@@ -243,7 +243,7 @@ class Result extends Friendly implements \Iterator, \ArrayAccess, \Countable, \J
 	}
 
 	/** Insert row in a table
-	 * @param mixed array($column => $value)|Traversable for single row insert or Result|string for INSERT ... SELECT
+	 * @param mixed [$column => $value]|Traversable for single row insert or Result|string for INSERT ... SELECT
 	 * @param ... used for extended insert
 	 * @return mixed inserted Row or false in case of an error or number of affected rows for INSERT ... SELECT
 	 */
@@ -273,8 +273,8 @@ class Result extends Friendly implements \Iterator, \ArrayAccess, \Countable, \J
 		if (!$data) {
 			return 0;
 		}
-		$values = array();
-		$parameters = array();
+		$values = [];
+		$parameters = [];
 		foreach ($data as $key => $val) {
 			// doesn't use binding because $this->parameters can be filled by ? or :name
 			$values[] = "$key = " . $this->quote($val);
@@ -299,7 +299,7 @@ class Result extends Friendly implements \Iterator, \ArrayAccess, \Countable, \J
 	 * @param array ($column => $value), empty array means use $insert
 	 * @return int number of affected rows or false in case of an error
 	 */
-	function insert_update(array $unique, array $insert, array $update = array()) {
+	function insert_update(array $unique, array $insert, array $update = []) {
 		if (!$update) {
 			$update = $insert;
 		}
@@ -307,7 +307,7 @@ class Result extends Friendly implements \Iterator, \ArrayAccess, \Countable, \J
 		$values = "(" . implode(", ", array_keys($insert)) . ") VALUES " . $this->quote($insert);
 		//! parameters
 		if ($this->cfg->driver == "mysql") {
-			$set = array();
+			$set = [];
 			if (!$update) {
 				$update = $unique;
 			}
@@ -376,26 +376,26 @@ class Result extends Friendly implements \Iterator, \ArrayAccess, \Countable, \J
 				$this->select[] = $columns;
 			}
 		} else {
-			$this->select = array();
+			$this->select = [];
 		}
 		return $this;
 	}
 
 	/** Add where condition, more calls appends with AND
-	 * @param mixed string possibly containing ? or :name; or array($condition => $parameters, ...)
+	 * @param mixed string possibly containing ? or :name; or [$condition => $parameters, ...]
 	 * @param mixed array accepted by PDOStatement::execute or a scalar value
 	 * @param mixed ...
 	 * @return Result fluent interface
 	 */
-	function where($condition, $parameters = array()) {
+	function where($condition, $parameters = []) {
 		$args = func_get_args();
 		return $this->whereOperator("AND", $args);
 	}
 
 	protected function whereOperator($operator, array $args) {
 		$condition = $args[0];
-		$parameters = (count($args) > 1 ? $args[1] : array());
-		if (is_array($condition)) { // where(array("column1" => 1, "column2 > ?" => 2))
+		$parameters = (count($args) > 1 ? $args[1] : []);
+		if (is_array($condition)) { // where(["column1" => 1, "column2 > ?" => 2])
 			foreach ($condition as $key => $val) {
 				$this->where($key, $val);
 			}
@@ -404,7 +404,7 @@ class Result extends Friendly implements \Iterator, \ArrayAccess, \Countable, \J
 		$this->__destruct();
 		$this->conditions[] = "$operator $condition";
 		$condition = $this->removeExtraDots($condition);
-		if (count($args) != 2 || strpbrk($condition, "?:")) { // where("column < ? OR column > ?", array(1, 2))
+		if (count($args) != 2 || strpbrk($condition, "?:")) { // where("column < ? OR column > ?", [1, 2])
 			if (count($args) != 2 || !is_array($parameters)) { // where("column < ? OR column > ?", 1, 2)
 				$parameters = array_slice($args, 1);
 			}
@@ -424,7 +424,7 @@ class Result extends Friendly implements \Iterator, \ArrayAccess, \Countable, \J
 				$condition .= " IN ($clone)";
 				$this->parameters = array_merge($this->parameters, $clone->parameters);
 			} else {
-				$in = array();
+				$in = [];
 				foreach ($clone as $row) {
 					$row = array_values(iterator_to_array($row));
 					if ($clone instanceof MultiResult && count($row) > 1) {
@@ -444,7 +444,7 @@ class Result extends Friendly implements \Iterator, \ArrayAccess, \Countable, \J
 			}
 		} elseif (!is_array($parameters)) { // where("column", "x")
 			$condition .= " = " . $this->quote($parameters);
-		} else { // where("column", array(1, 2))
+		} else { // where("column", [1, 2])
 			$condition = $this->whereIn($condition, $parameters);
 		}
 		$this->where[] = (preg_match('~^\)+$~', $condition)
@@ -465,7 +465,7 @@ class Result extends Friendly implements \Iterator, \ArrayAccess, \Countable, \J
 				$condition = "$condition OR $column IS NULL";
 			}
 		} else { // http://download.oracle.com/docs/cd/B19306_01/server.102/b14200/expressions014.htm
-			$or = array();
+			$or = [];
 			for ($i=0; $i < count($parameters); $i += 1000) {
 				$or[] = "$condition IN " . $this->quote(array_slice($parameters, $i, 1000));
 			}
@@ -490,13 +490,13 @@ class Result extends Friendly implements \Iterator, \ArrayAccess, \Countable, \J
 	 * @param mixed ...
 	 * @return Result fluent interface
 	 */
-	function __invoke($where, $parameters = array()) {
+	function __invoke($where, $parameters = []) {
 		$args = func_get_args();
 		return $this->whereOperator("AND", $args);
 	}
 
 	/** Add order clause, more calls appends to the end
-	 * @param mixed "column1, column2 DESC" or array("column1", "column2 DESC"), empty string to reset previous order
+	 * @param mixed "column1, column2 DESC" or ["column1", "column2 DESC"], empty string to reset previous order
 	 * @param string ...
 	 * @return Result fluent interface
 	 */
@@ -512,9 +512,9 @@ class Result extends Friendly implements \Iterator, \ArrayAccess, \Countable, \J
 				}
 			}
 		} elseif ($this->union) {
-			$this->unionOrder = array();
+			$this->unionOrder = [];
 		} else {
-			$this->order = array();
+			$this->order = [];
 		}
 		return $this;
 	}
@@ -626,8 +626,8 @@ class Result extends Friendly implements \Iterator, \ArrayAccess, \Countable, \J
 		if (!isset($this->rows)) {
 			$result = false;
 			$exception = null;
-			$parameters = array();
-			foreach (array_merge($this->select, array($this, $this->group, $this->having), $this->order, $this->unionOrder) as $val) {
+			$parameters = [];
+			foreach (array_merge($this->select, [$this, $this->group, $this->having], $this->order, $this->unionOrder) as $val) {
 				if (($val instanceof Literal || $val instanceof self) && $val->parameters) {
 					$parameters = array_merge($parameters, $val->parameters);
 				}
@@ -640,13 +640,13 @@ class Result extends Friendly implements \Iterator, \ArrayAccess, \Countable, \J
 			if (!$result) {
 				if (!$this->select && $this->accessed) {
 					$this->accessed = '';
-					$this->access = array();
+					$this->access = [];
 					$result = $this->query($this->__toString(), $parameters);
 				} elseif ($exception) {
 					throw $exception;
 				}
 			}
-			$this->rows = array();
+			$this->rows = [];
 			if ($result) {
 				$result->setFetchMode(\PDO::FETCH_ASSOC);
 				foreach ($result as $key => $row) {
@@ -684,15 +684,15 @@ class Result extends Friendly implements \Iterator, \ArrayAccess, \Countable, \J
 	 * @return array
 	 */
 	function fetchPairs($key, $value = '') {
-		$return = array();
+		$return = [];
 		$clone = clone $this;
 		if ($value != "") {
-			$clone->select = array();
+			$clone->select = [];
 			$clone->select("$key, $value"); // MultiResult adds its column
 		} elseif ($clone->select) {
 			array_unshift($clone->select, $key);
 		} else {
-			$clone->select = array("$key, $this->table.*");
+			$clone->select = ["$key, $this->table.*"];
 		}
 		foreach ($clone as $row) {
 			$values = array_values(iterator_to_array($row));

@@ -18,7 +18,7 @@ class DatabaseCache implements Cache {
 
 	function save($key, $data) {
 		// REPLACE is not supported by PostgreSQL and MS SQL
-		$parameters = array(serialize($data), $key);
+		$parameters = [serialize($data), $key];
 		$result = $this->connection->prepare("UPDATE notorm SET data = ? WHERE id = ?");
 		$result->execute($parameters);
 		if (!$result->rowCount()) {

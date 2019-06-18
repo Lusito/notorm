@@ -21,13 +21,13 @@ class DB {
 
 	/** Get table
 	 * @param string
-	 * @param array (["condition"[, array("value")]]) passed to Result::where()
+	 * @param array (["condition"[, ["value"]]]) passed to Result::where()
 	 * @return Result
 	 */
     public static function getTable($table, ...$where) {
 		$return = new Result(self::$cfg->structure->getReferencingTable($table, ''), self::$cfg);
 		if ($where)
-			call_user_func_array(array($return, 'where'), $where);
+			call_user_func_array([$return, 'where'], $where);
 		return $return;
     }
 
