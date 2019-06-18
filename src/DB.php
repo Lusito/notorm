@@ -15,8 +15,11 @@ class DB {
         return !is_null(self::$cfg);
     }
 
-    public static function __callStatic($table, $where) {
-        return self::getTable($table, $where);
+    public static function __callStatic($table, array $where) {
+		$return = new Result(self::$cfg->structure->getReferencingTable($table, ''), self::$cfg);
+		if ($where)
+			call_user_func_array([$return, 'where'], $where);
+		return $return;
     }
 
 	/** Get table
@@ -25,10 +28,7 @@ class DB {
 	 * @return Result
 	 */
     public static function getTable($table, ...$where) {
-		$return = new Result(self::$cfg->structure->getReferencingTable($table, ''), self::$cfg);
-		if ($where)
-			call_user_func_array([$return, 'where'], $where);
-		return $return;
+		return $this->callStatic($table, $where);
     }
 
     public static function getRow($table, $id) {
