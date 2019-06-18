@@ -3,7 +3,6 @@
 use Lusito\NotORM\ConfigBuilder;
 use Lusito\NotORM\Database;
 
-error_reporting(E_ALL | E_STRICT);
 require_once(__DIR__ . '/../vendor/autoload.php');
 
 abstract class TestCase extends \PHPUnit\Framework\TestCase {
