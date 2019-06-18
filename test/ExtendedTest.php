@@ -2,13 +2,13 @@
 
 final class ExtendedTest extends TestCase
 {
+    /**
+     * @group noSQLite
+     * @group noOracle
+     */
     public function testExtendedInsert(): void
     {
         $db = $this->setupDatabase();
-
-        // fixme: skip if:
-        // $driver = $connection->getAttribute(PDO::ATTR_DRIVER_NAME);
-        // preg_match('~^(sqlite|oci)$~', $driver) ? "Not supported in $driver.\n" : "";
 
         $result = [];
         $application = $db->application[3];

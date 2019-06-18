@@ -2,13 +2,13 @@
 
 final class UnionTest extends TestCase
 {
+    /**
+     * @group noSQLite
+     * @group noOracle
+     */
     public function testComplexUnion(): void
     {
         $db = $this->setupDatabase();
-        
-        // fixme: skip if:
-        // $driver = $connection->getAttribute(PDO::ATTR_DRIVER_NAME);
-        // preg_match('~^(sqlite|oci)$~', $driver) ? "Not supported in $driver.\n" : "";
 
         $result = [];
         $applications = $db->application()->select("id")->order("id DESC")->limit(2);
