@@ -24,7 +24,7 @@ NotORM is a PHP library for simple working with data in the database. The most i
 
 Install via composer:
 
-`composer require lusito/not-orm`
+`composer require lusito/notorm`
 
 Include the autoloader in your php script, unless you've done that already:
 

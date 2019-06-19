@@ -1,5 +1,5 @@
 {
-    "name": "lusito/not-orm",
+    "name": "lusito/notorm",
     "description": "NotORM is a PHP library for simple working with data in the database.",
     "version": "0.8",
     "keywords": [
@@ -7,7 +7,7 @@
         "Database",
         "PDO"
     ],
-    "homepage": "https://github.com/lusito/not-orm",
+    "homepage": "https://github.com/lusito/notorm",
     "license": "Zlib",
     "authors": [{
             "name": "Santo Pfingsten",
@@ -17,8 +17,8 @@
         }
     ],
     "support": {
-        "issues": "https://github.com/lusito/not-orm/issues",
-        "source": "https://github.com/lusito/not-orm"
+        "issues": "https://github.com/lusito/notorm/issues",
+        "source": "https://github.com/lusito/notorm"
     },
     "require": {
         "php": "^5.6.0|^7.0.0"
