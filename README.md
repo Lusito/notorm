@@ -13,11 +13,12 @@ NotORM is a PHP library for simple working with data in the database. The most i
 - The original code has not been maintained in years.
 - I needed a PSR-4 version of it
 - I refactored the code a bit
+- I ported the code to PHP 7.1
 - I added a couple of extra features
 - Usage has been left mainly untouched
 
 ### Requirements
-- PHP >= 5.6 | >= 7.0
+- PHP >= 7.1
 - any database supported by PDO (tested with MySQL, SQLite, PostgreSQL, MS SQL, Oracle)
 
 ### Installation
